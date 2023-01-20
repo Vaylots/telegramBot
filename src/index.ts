@@ -1,10 +1,12 @@
 import { config } from "dotenv";
+import { LanguageDetect } from "./modules/LanguageDetect";
 import { OpenAICompletion } from "./modules/OpenAiCompletion";
 import { Telegraf, Markup } from "telegraf";
 config();
 
 const openai = new OpenAICompletion();
 const bot = new Telegraf(`${process.env.BOT_TOKEN}`);
+const languageDetector = new LanguageDetect();
 
 bot.command("start", async (ctx) => {
   const message = `Привет, ${ctx.message.from.username}, я бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации. Чтобы воспользоваться ботом напиши команду "/chat <текст>", пример "/chat что такое ChatGPT". `;
@@ -20,7 +22,14 @@ bot.command("chat", async (ctx) => {
       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
         .message_id;
       const response = (await openai.getCompletion(`${prompts}`)).text;
-      await ctx.replyWithMarkdownV2("```" + `${response}` + "```");
+      const codeLanguage = languageDetector.detectLanguage(`${response}`);
+      if (codeLanguage != "Natural") {
+        await ctx.replyWithMarkdownV2(
+          "```" + `${codeLanguage}` + `${response}` + "```"
+        );
+      } else {
+        await ctx.reply(`${response}`);
+      }
       bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
     } else {
       await ctx.reply("Похоже вы не ввели текст");
