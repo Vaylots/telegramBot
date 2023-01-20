@@ -25,7 +25,7 @@ bot.command("chat", async (ctx) => {
       const codeLanguage = languageDetector.detectLanguage(`${response}`);
       if (codeLanguage != "Natural") {
         await ctx.replyWithMarkdownV2(
-          "```" + `${codeLanguage}` + `${response}` + "```"
+          "```" + `${codeLanguage} ` + `${response}` + "```"
         );
       } else {
         await ctx.reply(`${response}`);
