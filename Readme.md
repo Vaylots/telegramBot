@@ -1,6 +1,6 @@
 # Telegrambot
 
-TelegramAiBot — это проект, использующий [Telegraf](https://telegraf.js.org/) библиотеку на `Node`. Он также использует [OpenAI](https://openai.com/) библиотеку для ответа пользователь с помощью модели `text-davinci-003`.
+TelegramAiBot — это проект, использующий [Telegraf](https://telegraf.js.org/) библиотеку на `Node`. Он также использует [OpenAI](https://openai.com/) библиотеку для ответа пользователям с помощью модели `text-davinci-003`.
 
 ## Requirements
 
