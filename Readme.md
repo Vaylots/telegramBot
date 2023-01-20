@@ -5,11 +5,6 @@ TelegramAiBot — это проект, использующий [Telegraf](https
 ## Requirements
 
 - Node 18.11.18 or higher
-- Typescript 4.9.4 or higher
-- Eslint 8.32.0 or higher
-- Dotenv 16.0.3 or higher
-- OpenAI 3.1.0 or higher
-- Telegraf 4.11.2 or higher
 
 ## Installation
 
