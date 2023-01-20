@@ -17,10 +17,11 @@ bot.command("chat", async (ctx) => {
     message.splice(0, 1);
     const prompts: string = message.join(" ");
     if (prompts) {
-      await ctx.reply("Пожалуйста подождите");
+      const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
+        .message_id;
       const response = (await openai.getCompletion(`${prompts}`)).text;
-      console.log(response);
-      await ctx.reply(`${response}`);
+      await ctx.replyWithMarkdownV2("```" + `${response}` + "```");
+      bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
     } else {
       await ctx.reply("Похоже вы не ввели текст");
     }
