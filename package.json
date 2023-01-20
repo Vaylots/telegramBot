@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
+    "lang-detector": "^1.0.6",
     "openai": "^3.1.0",
     "telegraf": "^4.11.2"
   }
