@@ -24,9 +24,13 @@ bot.command("chat", async (ctx) => {
       const response = (await openai.getCompletion(`${prompts}`)).text;
       const codeLanguage = languageDetector.detectLanguage(`${response}`);
       if (codeLanguage != "Natural") {
-        await ctx.replyWithMarkdownV2(
-          "```" + `${codeLanguage} ` + `${response}` + "```"
-        );
+        try {
+          await ctx.replyWithMarkdownV2(
+            "```" + `${codeLanguage} ` + `${response}` + "```"
+          );
+        } catch (error) {
+          await ctx.reply(`${response}`);
+        }
       } else {
         await ctx.reply(`${response}`);
       }
