@@ -10,7 +10,7 @@ const languageDetector = new LanguageDetect();
 
 // Welcome the user to the bot and provide instructions on how to use it!
 bot.command("start", async (ctx) => {
-  const message = `Привет, ${ctx.message.from.username}, я бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации. Чтобы воспользоваться ботом напиши команду "/chat <текст>", пример "/chat что такое ChatGPT". `;
+  const message = `Привет, ${ctx.message.from.username}.\nЯ бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации.\nЧтобы воспользоваться ботом напиши команду "/chat <текст>".\nПример: "/chat что такое ChatGPT". `;
   await ctx.reply(message);
 });
 
