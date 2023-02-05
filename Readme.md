@@ -10,7 +10,7 @@ TelegramAiBot — это проект, использующий [Telegraf](https
 
 1.  Склонируйте репозиторий: `git clone https://github.com/Vaylots/TelegramAiBot.git`
 
-2.  Установите все зависимости Командой: `npm install`
+2.  Установите все зависимости командой: `npm install`
 
 3.  Создайте новый билд командой: `npm run build`
 
