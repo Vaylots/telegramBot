@@ -1,4 +1,5 @@
-const detectlang = require("lang-detector");
+// @ts-ignore
+import detectlang from "lang-detector";
 export class LanguageDetect {
   detectLanguage(input: string | undefined): string | undefined {
     if (input) {
