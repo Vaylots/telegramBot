@@ -2,16 +2,22 @@ import { config } from "dotenv";
 import { LanguageDetect } from "./modules/LanguageDetect";
 import { OpenAICompletion } from "./modules/OpenAiCompletion";
 import { Telegraf, Markup } from "telegraf";
+import { PrismaController } from "./modules/PrismaController";
 config();
 
 const openai = new OpenAICompletion();
 const bot = new Telegraf(`${process.env.BOT_TOKEN}`);
 const languageDetector = new LanguageDetect();
+const prismaController = new PrismaController();
 
 // Welcome the user to the bot and provide instructions on how to use it!
 bot.command("start", async (ctx) => {
   const message = `Привет, ${ctx.message.from.username}.\nЯ бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации.\nЧтобы воспользоваться ботом напиши команду "/chat <текст>".\nПример: "/chat что такое ChatGPT". `;
   await ctx.reply(message);
+  await prismaController.addUser(
+    ctx.message.from.username,
+    ctx.message.from.id
+  );
 });
 
 bot.command("chat", async (ctx) => {
