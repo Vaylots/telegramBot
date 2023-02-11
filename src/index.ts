@@ -13,8 +13,8 @@ const UserDB = new UserController();
 // Welcome the user to the bot, add user to mongoDB and provide instructions on how to use Bot
 bot.command("start", async (ctx) => {
   const message = `Привет, ${ctx.message.from.username}.\nЯ бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации.\nЧтобы воспользоваться ботом напиши команду "/chat <текст>".\nПример: "/chat что такое ChatGPT". `;
-  await UserDB.addUser(ctx.message.from.username, ctx.message.from.id);
   await ctx.reply(message);
+  await UserDB.addUser(ctx.message.from.username, ctx.message.from.id);
 });
 
 bot.command("chat", async (ctx) => {
