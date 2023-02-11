@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-export class PrismaController {
+export class UserController {
   prisma;
   constructor() {
     this.prisma = new PrismaClient();
@@ -12,22 +12,25 @@ export class PrismaController {
         userId: userId,
       },
     });
+
     return user;
   }
 
   async addUser(username: string | undefined, userId: number) {
     await this.prisma.$connect();
     const user = await this.findUserById(userId);
-    if (user) {
+    if (user == null) {
+      await this.prisma.users.create({
+        data: {
+          username: username,
+          userId: userId,
+        },
+      });
+    } else {
       await this.prisma.$disconnect();
       return;
     }
-    await this.prisma.users.create({
-      data: {
-        username: username,
-        userId: userId,
-      },
-    });
+
     await this.prisma.$disconnect();
   }
 }
