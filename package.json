@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "start:prod": "tsc && node ./dist/index.js"
+    "start:prod": "tsc && node ./dist/index.js",
+    "start:prod:db": "yarn prisma generate && tsc && node ./dist/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,9 +16,11 @@
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "eslint": "^8.32.0",
+    "prisma": "^4.10.1",
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@prisma/client": "^4.10.1",
     "dotenv": "^16.0.3",
     "lang-detector": "^1.0.6",
     "openai": "^3.1.0",
