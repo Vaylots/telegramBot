@@ -21,7 +21,6 @@ bot.command("start", async (ctx) => {
 });
 
 bot.command("chat", async (ctx) => {
-  console.log(await BannedDB.findUserById(ctx.message.from.id));
   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
     ctx.reply(
       "Вы были заблокированы.\nВы можете связаться с разработчиком и узнать причину блокировки, воспользовавшись командой /author"
