@@ -25,6 +25,6 @@ export class OpenAICompletion {
       presence_penalty: 0,
     });
 
-    return response.data.choices[0];
+    return response.data.choices[0].text;
   }
 }

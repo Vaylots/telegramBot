@@ -35,7 +35,9 @@ bot.command("chat", async (ctx) => {
     if (prompts) {
       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
         .message_id;
-      const response = (await openai.getCompletion(`${prompts}`)).text;
+      const response = (await openai.getCompletion(`${prompts}`))
+        ?.replace("\n", "")
+        .replace("\n", "");
       const codeLanguage = languageDetector.detectLanguage(`${response}`);
       if (codeLanguage != "Natural") {
         try {
