@@ -62,7 +62,7 @@ bot.command("chat", async (ctx) => {
   }
 });
 
-bot.command("chatGPT", async (ctx) => {
+bot.command("chatgpt", async (ctx) => {
   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
     ctx.reply(
       "Вы были заблокированы.\nВы можете связаться с разработчиком и узнать причину блокировки, воспользовавшись командой /author"
