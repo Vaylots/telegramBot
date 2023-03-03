@@ -157,7 +157,12 @@ bot.command("sendall", async (ctx) => {
         const users = await UserDB.getAllUsers();
         console.log(users);
         users.map((user) => {
-          bot.telegram.sendMessage(user.userId, message);
+          try {
+            bot.telegram.sendMessage(user.userId, message);
+          } catch (error) {
+            console.log(error);
+            ctx.reply(`${user.userId} сообщение не доставлено`);
+          }
         });
       } else {
         ctx.reply("Похоже вы не ввели текст");
