@@ -5,9 +5,11 @@ import { Telegraf, Markup } from "telegraf";
 import { UserController } from "./modules/Controllers/UserController";
 import { BannedUserController } from "./modules/Controllers/BannedUserController";
 import { AdminController } from "./modules/Controllers/AdminsController";
+import { OpenAiChat } from "./modules/OpenAiChat";
 config();
 
 const openai = new OpenAICompletion();
+const openAiChat = new OpenAiChat();
 const bot = new Telegraf(`${process.env.BOT_TOKEN}`);
 const languageDetector = new LanguageDetect();
 const UserDB = new UserController();
@@ -59,6 +61,48 @@ bot.command("chat", async (ctx) => {
     );
   }
 });
+
+bot.command("chatGPT", async (ctx) => {
+  if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
+    ctx.reply(
+      "Вы были заблокированы.\nВы можете связаться с разработчиком и узнать причину блокировки, воспользовавшись командой /author"
+    );
+    return;
+  }
+
+  try {
+    let message: string[] = ctx.message.text.split(" ");
+    message.splice(0, 1);
+    const prompts: string = message.join(" ");
+    if (prompts) {
+      const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
+        .message_id;
+      const response = (await openAiChat.getCompletion(`${prompts}`))?.content
+      const codeLanguage = languageDetector.detectLanguage(`${response}`);
+      if (codeLanguage != "Natural") {
+        try {
+          await ctx.replyWithMarkdownV2(
+            "```" + `${codeLanguage} ` + `${response}` + "```"
+          );
+        } catch (error) {
+          await ctx.reply(`${response}`);
+        }
+      } else {
+        await ctx.reply(`${response}`);
+      }
+      bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
+    } else {
+      await ctx.reply("Похоже вы не ввели текст");
+    }
+  } catch (error) {
+    console.log(error);
+    await ctx.reply(
+      "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
+    );
+  }
+});
+
+
 
 bot.command("author", async (ctx) => {
   await ctx.reply(
