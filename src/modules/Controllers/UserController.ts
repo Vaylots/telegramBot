@@ -1,8 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 export class UserController {
-  prisma;
+  private prisma;
   constructor() {
-    this.prisma = new PrismaClient();
+     this.prisma = new PrismaClient();
+  }
+
+  async getAllUsers() {
+    await this.prisma.$connect();
+    const users = await this.prisma.users.findMany();
+    return users;
+    
   }
 
   async findUserById(userId: number) {

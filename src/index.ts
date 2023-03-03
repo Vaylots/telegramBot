@@ -77,7 +77,7 @@ bot.command("chatgpt", async (ctx) => {
     if (prompts) {
       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
         .message_id;
-      const response = (await openAiChat.getCompletion(`${prompts}`))?.content
+      const response = (await openAiChat.getCompletion(`${prompts}`))?.content;
       const codeLanguage = languageDetector.detectLanguage(`${response}`);
       if (codeLanguage != "Natural") {
         try {
@@ -101,8 +101,6 @@ bot.command("chatgpt", async (ctx) => {
     );
   }
 });
-
-
 
 bot.command("author", async (ctx) => {
   await ctx.reply(
@@ -147,4 +145,27 @@ bot.command("unban", async (ctx) => {
   }
 });
 
+bot.command("sendall", async (ctx) => {
+  if ((await AdminDB.findUserById(ctx.message.from.id)) == null) {
+    return ctx.reply(`У вас нет прав на использование данной команды`);
+  } else {
+    try {
+      const command: string[] = ctx.message.text.split(" ");
+      command.splice(0, 1);
+      const message = command.join(" ");
+      if (message) {
+        const users = await UserDB.getAllUsers();
+        console.log(users);
+        users.map((user) => {
+          bot.telegram.sendMessage(user.userId, message);
+        });
+      } else {
+        ctx.reply("Похоже вы не ввели текст");
+      }
+    } catch (error) {
+      console.log(error);
+      ctx.reply("error");
+    }
+  }
+});
 bot.launch();
