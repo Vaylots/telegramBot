@@ -6,6 +6,7 @@ import { UserController } from "./modules/Controllers/UserController";
 import { BannedUserController } from "./modules/Controllers/BannedUserController";
 import { AdminController } from "./modules/Controllers/AdminsController";
 import { OpenAiChat } from "./modules/OpenAiChat";
+import { splitMessage } from "./modules/splitMessage";
 config();
 
 const openai = new OpenAICompletion();
@@ -31,9 +32,7 @@ bot.command("chat", async (ctx) => {
   }
 
   try {
-    let message: string[] = ctx.message.text.split(" ");
-    message.splice(0, 1);
-    const prompts: string = message.join(" ");
+    const prompts = splitMessage(ctx.message.text);
     if (prompts) {
       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
         .message_id;
@@ -71,9 +70,7 @@ bot.command("chatgpt", async (ctx) => {
   }
 
   try {
-    let message: string[] = ctx.message.text.split(" ");
-    message.splice(0, 1);
-    const prompts: string = message.join(" ");
+    const prompts = splitMessage(ctx.message.text);
     if (prompts) {
       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
         .message_id;
@@ -116,9 +113,7 @@ bot.command("ban", async (ctx) => {
     return ctx.reply(`У вас нет прав на использование данной команды`);
   } else {
     try {
-      const message: string[] = ctx.message.text.split(" ");
-      message.splice(0, 1);
-      const idForBan = message.join(" ");
+      const idForBan = splitMessage(ctx.message.text);
       await BannedDB.banUser(parseInt(idForBan));
       await ctx.reply("Пользователь забанен");
     } catch (error) {
@@ -133,10 +128,8 @@ bot.command("unban", async (ctx) => {
     return ctx.reply(`У вас нет прав на использование данной команды`);
   } else {
     try {
-      const message: string[] = ctx.message.text.split(" ");
-      message.splice(0, 1);
-      const idForBan = message.join(" ");
-      await BannedDB.unBanUser(parseInt(idForBan));
+      const idForUnBan = splitMessage(ctx.message.text);
+      await BannedDB.unBanUser(parseInt(idForUnBan));
       await ctx.reply("Пользователь разбанен");
     } catch (error) {
       console.log(error);
@@ -150,9 +143,7 @@ bot.command("sendall", async (ctx) => {
     return ctx.reply(`У вас нет прав на использование данной команды`);
   } else {
     try {
-      const command: string[] = ctx.message.text.split(" ");
-      command.splice(0, 1);
-      const message = command.join(" ");
+      const message = splitMessage(ctx.message.text);
       if (message) {
         const users = await UserDB.getAllUsers();
         console.log(users);
