@@ -4,5 +4,7 @@
  * @return string without slash command
  */
 export function splitMessage(message: string): string {
-  return message.split(" ").splice(0, 1).join(" ");
+   let array = message.split(" ")
+   array.splice(0, 1)
+  return array.join(" ");
 }
