@@ -23,6 +23,44 @@ bot.command("start", async (ctx) => {
   await UserDB.addUser(ctx.message.from.username, ctx.message.from.id);
 });
 
+// bot.command("chat", async (ctx) => {
+//   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
+//     ctx.reply(
+//       "Вы были заблокированы.\nВы можете связаться с разработчиком и узнать причину блокировки, воспользовавшись командой /author"
+//     );
+//     return;
+//   }
+
+//   try {
+//     const prompts = splitMessage(ctx.message.text);
+//     if (prompts) {
+//       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
+//         .message_id;
+//       const response = (await openai.getCompletion(`${prompts}`)).text;
+//       const codeLanguage = languageDetector.detectLanguage(`${response}`);
+//       if (codeLanguage != "Natural") {
+//         try {
+//           await ctx.replyWithMarkdownV2(
+//             "```" + `${codeLanguage} ` + `${response}` + "```"
+//           );
+//         } catch (error) {
+//           await ctx.reply(`${response}`);
+//         }
+//       } else {
+//         await ctx.reply(`${response}`);
+//       }
+//       bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
+//     } else {
+//       await ctx.reply("Похоже вы не ввели текст");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     await ctx.reply(
+//       "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
+//     );
+//   }
+// });
+
 bot.command("chat", async (ctx) => {
   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
     ctx.reply(
@@ -31,71 +69,36 @@ bot.command("chat", async (ctx) => {
     return;
   }
 
-  try {
-    const prompts = splitMessage(ctx.message.text);
-    if (prompts) {
+  const prompts = splitMessage(ctx.message.text);
+  if (prompts) {
+    try {
       const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
         .message_id;
-      const response = (await openai.getCompletion(`${prompts}`)).text;
-      const codeLanguage = languageDetector.detectLanguage(`${response}`);
-      if (codeLanguage != "Natural") {
-        try {
-          await ctx.replyWithMarkdownV2(
-            "```" + `${codeLanguage} ` + `${response}` + "```"
-          );
-        } catch (error) {
+      const [status, response] = await openAiChat.getCompletion(`${prompts}`);
+      if (status == 200) {
+        const codeLanguage = languageDetector.detectLanguage(`${response}`);
+        if (codeLanguage != "Natural") {
+          try {
+            await ctx.replyWithMarkdownV2(
+              "```" + `${codeLanguage} ` + `${response}` + "```"
+            );
+          } catch (error) {
+            await ctx.reply(`${response}`);
+          }
+        } else {
           await ctx.reply(`${response}`);
         }
-      } else {
-        await ctx.reply(`${response}`);
       }
-      bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
-    } else {
-      await ctx.reply("Похоже вы не ввели текст");
+      if(status == 429) await ctx.reply("Бот сейчас испытывает большие нагрузки, пожалуйста подождите около минуты и попробуйте снова")ж
+      await bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
+    } catch (error) {
+      console.log(error);
+      await ctx.reply(
+        "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
+      );
     }
-  } catch (error) {
-    console.log(error);
-    await ctx.reply(
-      "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
-    );
-  }
-});
-
-bot.command("chatgpt", async (ctx) => {
-  if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
-    ctx.reply(
-      "Вы были заблокированы.\nВы можете связаться с разработчиком и узнать причину блокировки, воспользовавшись командой /author"
-    );
-    return;
-  }
-
-  try {
-    const prompts = splitMessage(ctx.message.text);
-    if (prompts) {
-      const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
-        .message_id;
-      const response = (await openAiChat.getCompletion(`${prompts}`))?.content;
-      const codeLanguage = languageDetector.detectLanguage(`${response}`);
-      if (codeLanguage != "Natural") {
-        try {
-          await ctx.replyWithMarkdownV2(
-            "```" + `${codeLanguage} ` + `${response}` + "```"
-          );
-        } catch (error) {
-          await ctx.reply(`${response}`);
-        }
-      } else {
-        await ctx.reply(`${response}`);
-      }
-      bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
-    } else {
-      await ctx.reply("Похоже вы не ввели текст");
-    }
-  } catch (error) {
-    console.log(error);
-    await ctx.reply(
-      "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
-    );
+  } else {
+    await ctx.reply("Похоже вы не ввели текст");
   }
 });
 
