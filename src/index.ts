@@ -89,7 +89,7 @@ bot.command("chat", async (ctx) => {
           await ctx.reply(`${response}`);
         }
       }
-      if(status == 429) await ctx.reply("Бот сейчас испытывает большие нагрузки, пожалуйста подождите около минуты и попробуйте снова")ж
+      if(status == 429) await ctx.reply("Бот сейчас испытывает большие нагрузки, пожалуйста подождите около минуты и попробуйте снова")
       await bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
     } catch (error) {
       console.log(error);
