@@ -61,6 +61,8 @@ bot.command("start", async (ctx) => {
 //   }
 // });
 
+
+/*
 bot.command("chat", async (ctx) => {
   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
     ctx.reply(
@@ -103,8 +105,9 @@ bot.command("chat", async (ctx) => {
     await ctx.reply("Похоже вы не ввели текст");
   }
 });
+*/
 
-bot.command("author", async (ctx) => {
+bot.command("author", async   (ctx) => {
   await ctx.reply(
     `Тут можно найти автора`,
     Markup.inlineKeyboard([
@@ -119,6 +122,10 @@ bot.command("ban", async (ctx) => {
   } else {
     try {
       const idForBan = splitMessage(ctx.message.text);
+      if(!idForBan) {
+        await ctx.reply("Id отсутствует")
+        return
+      }
       await BannedDB.banUser(parseInt(idForBan));
       await ctx.reply("Пользователь забанен");
     } catch (error) {
@@ -134,6 +141,10 @@ bot.command("unban", async (ctx) => {
   } else {
     try {
       const idForUnBan = splitMessage(ctx.message.text);
+      if(!idForUnBan) {
+        await ctx.reply("Id отсутствует")
+        return;
+      }
       await BannedDB.unBanUser(parseInt(idForUnBan));
       await ctx.reply("Пользователь разбанен");
     } catch (error) {
@@ -169,4 +180,40 @@ bot.command("sendall", async (ctx) => {
     }
   }
 });
+
+bot.on("message",async (ctx) => {
+  if("text" in ctx.message){
+    const prompts = ctx.message.text;
+    try {
+      const waitMessageId = (await ctx.reply("Пожалуйста подождите"))
+        .message_id;
+      const [status, response] = await openAiChat.getCompletion(`${prompts}`);
+      if (status == 200) {
+        const codeLanguage = languageDetector.detectLanguage(`${response}`);
+        if (codeLanguage != "Natural") {
+          try {
+            await ctx.replyWithMarkdownV2(
+              "```" + `${codeLanguage} ` + `${response}` + "```"
+            );
+          } catch (error) {
+            await ctx.reply(`${response}`);
+          }
+        } else {
+          await ctx.reply(`${response}`);
+        }
+      }
+      if (status == 429)
+        await ctx.reply(
+          "Бот сейчас испытывает большие нагрузки, пожалуйста подождите около минуты и попробуйте снова"
+        );
+      await bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
+    } catch (TimeoutError) {
+      console.log(TimeoutError);
+      await ctx.reply(
+        "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
+      );
+    }
+  }
+
+})
 bot.launch();
