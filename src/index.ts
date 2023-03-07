@@ -23,6 +23,7 @@ bot.command("start", async (ctx) => {
   await UserDB.addUser(ctx.message.from.username, ctx.message.from.id);
 });
 
+// @Depricated
 // bot.command("chat", async (ctx) => {
 //   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
 //     ctx.reply(
@@ -61,7 +62,7 @@ bot.command("start", async (ctx) => {
 //   }
 // });
 
-
+// @Depricated
 /*
 bot.command("chat", async (ctx) => {
   if ((await BannedDB.findUserById(ctx.message.from.id)) != null) {
