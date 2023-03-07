@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { LanguageDetect } from "./modules/LanguageDetect";
-import { OpenAICompletion } from "./modules/OpenAiCompletion";
+// import { OpenAICompletion } from "./modules/OpenAiCompletion";
 import { Telegraf, Markup } from "telegraf";
 import { UserController } from "./modules/Controllers/UserController";
 import { BannedUserController } from "./modules/Controllers/BannedUserController";
@@ -9,7 +9,7 @@ import { OpenAiChat } from "./modules/OpenAiChat";
 import { splitMessage } from "./modules/splitMessage";
 config();
 
-const openai = new OpenAICompletion();
+// const openai = new OpenAICompletion();
 const openAiChat = new OpenAiChat();
 const bot = new Telegraf(`${process.env.BOT_TOKEN}`);
 const languageDetector = new LanguageDetect();
@@ -68,7 +68,6 @@ bot.command("chat", async (ctx) => {
     );
     return;
   }
-
   const prompts = splitMessage(ctx.message.text);
   if (prompts) {
     try {
@@ -89,10 +88,13 @@ bot.command("chat", async (ctx) => {
           await ctx.reply(`${response}`);
         }
       }
-      if(status == 429) await ctx.reply("Бот сейчас испытывает большие нагрузки, пожалуйста подождите около минуты и попробуйте снова")
+      if (status == 429)
+        await ctx.reply(
+          "Бот сейчас испытывает большие нагрузки, пожалуйста подождите около минуты и попробуйте снова"
+        );
       await bot.telegram.deleteMessage(ctx.chat.id, waitMessageId);
-    } catch (error) {
-      console.log(error);
+    } catch (TimeoutError) {
+      console.log(TimeoutError);
       await ctx.reply(
         "Простите, произошла ошибка, пожалуйста переформулируйте свой запрос и попробуйте ещё раз.\nЕсли ошибка не пропала, напишите сюда.\nt.me/vaylots"
       );
