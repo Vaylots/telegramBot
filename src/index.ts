@@ -18,7 +18,7 @@ const BannedDB = new BannedUserController();
 const AdminDB = new AdminController();
 
 bot.command("start", async (ctx) => {
-  const message = `Привет, ${ctx.message.from.username}.\nЯ бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации.\nЧтобы воспользоваться ботом напиши команду "/chat <текст>".\nПример: "/chat что такое ChatGPT". `;
+  const message = `Привет, ${ctx.message.from.username}.\nЯ бот который поможет тебе опробовать chatGPT без зарубежного номера для регистрации.\nЧтобы воспользоваться ботом просто задай ему интерисующий вас вопрос.\nПример:\n"Что такое chatGPT?"`;
   await ctx.reply(message);
   await UserDB.addUser(ctx.message.from.username, ctx.message.from.id);
 });
